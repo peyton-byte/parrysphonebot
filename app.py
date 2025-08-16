@@ -24,7 +24,8 @@ def voice():
     lowered = speech.lower()
 
     if not speech:
-        response.say("Thanks for calling Parrys in Hamilton. How can I help you today?", voice='Polly.Salli')
+        gather = response.gather(input='speech', timeout=5)
+        gather.say("Thanks for calling Parrys in Hamilton. How can I help you today?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
     if caller_is_done(speech):
@@ -36,8 +37,6 @@ def voice():
         response.say("Okay, transferring you to a team member now.", voice='Polly.Salli')
         response.dial("+13158240002")
         return Response(str(response), mimetype='text/xml')
-
-    # --- Instant Answers ---
 
     if "hour" in lowered or "open" in lowered or "time" in lowered:
         response.say("We're open from 8 to 6, Monday through Friday. Saturday 8 to 5, and Sunday 9 to 5.", voice='Polly.Salli')
@@ -94,5 +93,3 @@ If unsure, suggest speaking to a team member.
     response.pause(length=1)
     response.say("Is there anything else I can help you with?", voice='Polly.Salli')
     return Response(str(response), mimetype='text/xml')
-
-
