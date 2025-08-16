@@ -20,11 +20,10 @@ def caller_is_done(speech):
 def voice():
     speech = request.form.get("SpeechResult", "").strip()
     response = VoiceResponse()
-
     lowered = speech.lower()
 
     if not speech:
-        gather = response.gather(input='speech', timeout=5)
+        gather = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         gather.say("Thanks for calling Parrys in Hamilton. How can I help you today?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
@@ -64,7 +63,7 @@ def voice():
         response.say("Yes, we repair window screens and single-pane windows as long as the frame is not damaged.", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
-    # --- GPT Fallback ---
+    # GPT fallback
     openai.api_key = os.environ.get("OPENAI_API_KEY")
 
     completion = openai.ChatCompletion.create(
@@ -75,21 +74,21 @@ def voice():
 You are a helpful, warm employee at Parrys Hardware in Hamilton, NY.
 Keep responses short and clear.
 
-Store hours: Mon–Fri 8 AM–6 PM, Sat 8–5, Sun 9–5
+Store hours: Mon-Fri 8 AM-6 PM, Sat 8-5, Sun 9-5
 Address: 100 Utica Street, Hamilton, NY
 Shipping: UPS Access Point (drop-off with label), FedEx drop-offs with prepaid labels. We create FedEx labels in-store. Pickup is weekdays only.
 Dry Cleaning: Out and back every Wednesday morning.
 Repairs: We repair screens and single-pane windows, only if the frame is not damaged.
 Top rental pricing: Pressure washer $60, Floor sander $66, Tile saw $58, Appliance cart $15, Drywall lift $37
 If unsure, suggest speaking to a team member.
-"""},
-            {"role": "user", "content": speech}
+"""}, {"role": "user", "content": speech}
         ]
     )
 
     reply = completion.choices[0].message["content"]
-
     response.say(reply, voice='Polly.Salli')
     response.pause(length=1)
-    response.say("Is there anything else I can help you with?", voice='Polly.Salli')
+    gather = response.gather(input='speech', timeout=5, action='/voice', method='POST')
+    gather.say("Is there anything else I can help you with?", voice='Polly.Salli')
     return Response(str(response), mimetype='text/xml')
+    
