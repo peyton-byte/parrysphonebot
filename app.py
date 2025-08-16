@@ -37,46 +37,61 @@ def voice():
         response.dial("+13158240002")
         return Response(str(response), mimetype='text/xml')
 
+    # --- Instant Answers with polite buffer ---
+
     if "hour" in lowered or "open" in lowered or "time" in lowered:
+        response.say("Let me check that for you...", voice='Polly.Salli')
+        response.pause(length=0.5)
         response.say("We're open from 8 to 6, Monday through Friday. Saturday 8 to 5, and Sunday 9 to 5.", voice='Polly.Salli')
         followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
     if "address" in lowered or "location" in lowered or "where are you" in lowered:
+        response.say("Let me check that for you...", voice='Polly.Salli')
+        response.pause(length=0.5)
         response.say("We're located at 100 Utica Street in Hamilton, New York.", voice='Polly.Salli')
         followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
     if "pressure washer" in lowered:
+        response.say("Let me check that for you...", voice='Polly.Salli')
+        response.pause(length=0.5)
         response.say("Yes, we rent pressure washers for 60 dollars per day.", voice='Polly.Salli')
         followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
     if "shipping" in lowered or "ups" in lowered or "fedex" in lowered or "package" in lowered or "drop off" in lowered:
+        response.say("Let me check that for you...", voice='Polly.Salli')
+        response.pause(length=0.5)
         response.say("We are a UPS Access Point. You can drop off UPS packages with a label. We also accept FedEx packages if they have prepaid labels.", voice='Polly.Salli')
-        response.pause(length=1)
-        response.say("If you need to ship something out, we can create a label for FedEx, including standard or overnight delivery. Please note that carriers only pick up during weekdays.", voice='Polly.Salli')
+        response.pause(length=0.5)
+        response.say("If you need to ship something out, we can create a label for FedEx, including standard or overnight delivery. Carriers only pick up on weekdays.", voice='Polly.Salli')
         followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
     if "dry clean" in lowered or "dry cleaning" in lowered:
+        response.say("Let me check that for you...", voice='Polly.Salli')
+        response.pause(length=0.5)
         response.say("Yes, we offer dry cleaning. Items go out and return every Wednesday morning.", voice='Polly.Salli')
         followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
     if "screen repair" in lowered or "window repair" in lowered or "broken window" in lowered or "fix screen" in lowered:
+        response.say("Let me check that for you...", voice='Polly.Salli')
+        response.pause(length=0.5)
         response.say("Yes, we repair window screens and single-pane windows as long as the frame is not damaged.", voice='Polly.Salli')
         followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
         followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
         return Response(str(response), mimetype='text/xml')
 
-    # GPT fallback
+    # --- GPT Fallback with polite buffer ---
     openai.api_key = os.environ.get("OPENAI_API_KEY")
+    response.say("Let me check that for you...", voice='Polly.Salli')
 
     completion = openai.ChatCompletion.create(
         model="gpt-4o",
@@ -103,4 +118,3 @@ If unsure, suggest speaking to a team member.
     followup = response.gather(input='speech', timeout=5, action='/voice', method='POST')
     followup.say("Is there anything else I can help you with?", voice='Polly.Salli')
     return Response(str(response), mimetype='text/xml')
-    
